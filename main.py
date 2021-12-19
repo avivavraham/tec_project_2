@@ -1,5 +1,10 @@
 import numpy as np
+import mykmeanssp as km
+import sys
+import pandas as pd
 
+# To use this run in the terminal: python setup.py build_ext --inplace
+# And on Nova: python3.8.5 setup.py build_ext --inplace
 
 def k_means_initialization(k, data_points):
     np.random.seed(0)
@@ -9,7 +14,9 @@ def k_means_initialization(k, data_points):
     probes = np.zeros((number_of_data_points, d))
     distances = np.zeros(number_of_data_points)
     i = 1
+    index_list = []
     rand_index = np.random.choice(data_points.shape[0])
+    index_list.append(rand_index)
     clusters[0] = data_points[rand_index]
     while i < k:
         for l in range(0, number_of_data_points):
@@ -22,57 +29,60 @@ def k_means_initialization(k, data_points):
         probes = distances / sum(distances)
         i += 1
         rand_index = np.random.choice(data_points.shape[0], p=probes)
+        index_list.append(rand_index)
         clusters[i-1] = data_points[rand_index]
+    index_list.sort()
+    print(index_list)
     print(clusters)
     return clusters
-
 
 def norm(vector1, vector2):
     return sum((vector1 - vector2) ** 2) ** 0.5
 
+def validate(condition):
+    if not condition:
+        print('Invalid Input!')
+        exit(1)
 
-def algorithm(k, input_file, output_file, max_iter=200):
-    epsilon = 0.001
-    data_points = reading_from_file(input_file)
-    centroids = init_centroids(data_points, k)
-    clusters = k_means_initialization(k, data_points)
-    N = len(data_points)
-    while max_iter > 0 and False:  # ERROR
-        for i in range(N):
-            x_i = data_points[i]
-            index = find_closest_cluster(x_i, centroids)
-            clusters[index].append(x_i)
-        new_centroids = np.array([np.sum(clusters[i], axis=0) / float(len(clusters[i])) for i in range(k)])
-        max_iter -= 1
-        diff_centroids = centroids - new_centroids
-        diff_centroids = np.array([np.sqrt(np.sum(np.square(diff_centroids[i]))) for i in range(len(diff_centroids))])
-        if np.max(diff_centroids) < epsilon:
-            break
-        centroids = new_centroids
-    #writing_to_output_file(output_file, new_centroids)
-
-
-def writing_to_output_file(output_file, centroids):
-    f = open(output_file, "a")
-    f.write(str(np.round(centroids, 4)))
-    f.close()
-
-
-def find_closest_cluster(data_point, mu_array):
-    difference_array = np.array([np.sqrt(np.sum(np.square(data_point - mu_array[i]))) for i in range(len(mu_array))])
-    return np.argmin(difference_array)
-
-
-def reading_from_file(file):
-    lines = tuple(open(file, 'r'))
-    vectors = np.array([np.array(line.split(",")) for line in lines]).astype(np.float)
-    return vectors
-
-
-def init_centroids(vectors_array, k):
-    mu_array = np.array([vectors_array[i] for i in range(k)])
-    return mu_array
-
-
+# k max_iter epsilon input1 input2
 if __name__ == '__main__':
-    algorithm(3, 'input_1.txt', 'output_check')
+    try:
+        args = sys.argv[1:]
+
+        validate(len(args) == 5 or len(args) == 4)
+
+        validate(args[0].isdigit())
+        K = int(args[0])
+        validate(K > 1)
+
+        if len(args) == 5:
+            validate(args[1].isdigit())
+            max_iter = int(args[1])
+        else:
+            max_iter = 300
+        
+        # validate(args[-3].isdigit())
+        epsilon = float(args[-3])
+        validate(epsilon > 0)
+        input_file1 = args[-2]
+        input_file2 = args[-1]
+
+        file1 = pd.read_csv(input_file1, header=None)
+        file2 = pd.read_csv(input_file2, header=None)
+
+        inner_file = pd.merge(left=file1,right=file2,on=0, how = 'inner')
+        data_points = inner_file.drop(columns=[0],axis=1).to_numpy()
+
+        num_rows = data_points.shape[0]
+        d = data_points.shape[1]
+
+        validate(K < num_rows)
+
+        centroids = k_means_initialization(K,data_points)
+
+
+        km.fit(K,max_iter,d,num_rows,epsilon,centroids,data_points)
+    except Exception:
+        print('An Error Has Occurred')
+        exit(1)
+

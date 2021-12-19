@@ -3,14 +3,17 @@ import numpy as np
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from matplotlib import patches
+from main import k_means_initialization
+
+
 iris = datasets.load_iris()
 iris_data = iris.data
 
 k_array = [1,2,3,4,5,6,7,8,9,10]
 average_dispersion=[]
 for k in k_array:
-    # initial_centroids = init(iris_data,k)
-    # kmeans = KMeans(n_clusters=k,init=initial_centroids,random_state=0).fit(iris_data)
+    initial_centroids = k_means_initialization(k,iris_data)
+    kmeans = KMeans(n_clusters=k,init=initial_centroids,random_state=0).fit(iris_data)
     kmeans = KMeans(n_clusters=k,random_state=0).fit(iris_data)
     inertia = kmeans.inertia_
     average_dispersion.append(inertia)

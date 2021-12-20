@@ -41,6 +41,8 @@ double epsilon;
  */
 
 static PyObject* fit(PyObject *self, PyObject *args){
+
+    PyObject *pythonObject;
     
     centroids = allocate_array_2d(k, d);
     data_points = allocate_array_2d(num_rows, d);
@@ -53,7 +55,10 @@ static PyObject* fit(PyObject *self, PyObject *args){
     algorithm();
 
 /* This builds the answer ("d" = Convert a C double to a Python floating point number) back into a python object */
-    return Py_BuildValue("O", centroids); /*  Py_BuildValue(...) returns a PyObject*  */
+    pythonObject =  Py_BuildValue("O", centroids); /*  Py_BuildValue(...) returns a PyObject*  */
+    free_array_2d(centroids, k);
+
+    return pythonObject;
 }
 
 /*
@@ -87,7 +92,7 @@ static struct PyModuleDef moduledef = {
  * what we wrote in struct PyModuleDef.
  * This should be the only non-static item defined in the module file
  */
-PyMODINIT_FUNC
+PyMODINIT_FUNC 
 PyInit_mykmeanssp(void)
 {
     PyObject *m;
@@ -224,9 +229,7 @@ void algorithm() {
             max_iter = 0;
         }
     }
-    write_to_output_file();
     free(sum_diff_centroids);
-    free_array_2d(centroids, k);
     free_array_2d(new_centroids, k);
     free_array_2d(data_points, num_rows);
     free_array_2d(clusters, k);
@@ -242,46 +245,6 @@ double **allocate_array_2d(int r, int c) {
         error_occured(arr[r] == NULL);
     }
     return arr;
-}
-
-int is_number(char s[]) {
-    int i;
-    for (i = 0; s[i] != '\0'; i++) {
-        if (isdigit_help(s[i]) == 0)
-            return 0;
-    }
-    return 1;
-}
-
-int isdigit_help(char digit) {
-    if (digit < '0' || digit > '9')
-        return 0;
-    return 1;
-}
-
-void input_valid(int condition) {
-    if (condition == 0) {
-        printf("Invalid Input!\n");
-        exit(1);
-    }
-}
-
-void write_to_output_file() {
-    FILE *fptr;
-    int i, j;
-
-    fptr = fopen(output_file, "w");
-    error_occured(fptr == NULL);
-
-    for (i = 0; i < k; ++i) {
-        for (j = 0; j < d - 1; ++j) {
-            fprintf(fptr, "%.4f", centroids[i][j]);
-            fprintf(fptr, ",");
-        }
-        fprintf(fptr, "%.4f", centroids[i][d - 1]);
-        fprintf(fptr, "\n");
-    }
-    fclose(fptr);
 }
 
 void free_array_2d(double **arr, int r) {

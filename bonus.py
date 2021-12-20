@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 from matplotlib import patches
-from main import k_means_initialization
+from kmeans_pp import k_means_initialization
 
 
 iris = datasets.load_iris()

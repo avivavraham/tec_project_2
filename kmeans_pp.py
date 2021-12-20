@@ -79,9 +79,11 @@ if __name__ == '__main__':
 
         centroids = k_means_initialization(K,data_points)
 
+        centroids = km.fit(K,max_iter,d,num_rows,epsilon,centroids.tolist(),data_points.tolist())
+        print(centroids)
 
-        km.fit(K,max_iter,d,num_rows,epsilon,centroids,data_points)
+
     except Exception:
-        print('An Error Has Occurred')
+        print('An Error Has Occurred in python')
         exit(1)
 

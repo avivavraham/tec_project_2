@@ -2,6 +2,9 @@ elbow.png
 .DS_Store
 .vscode/
 to_do_list.rtf
+cmake-build-Debug
+cmakeLists.txt
+.idea
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

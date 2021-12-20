@@ -1,6 +1,6 @@
 #define PY_SSIZE_T_CLEAN
-#include <Python/Python.h> //for mac
-// #include <Python.h> //for linux
+// #include <Python/Python.h> //for mac
+#include <Python.h> //for linux
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,8 +9,6 @@
 int find_closets_cluster(double *data_point);
 
 void algorithm();
-
-void init_centroids();
 
 void free_array_2d(double **arr, int r);
 
@@ -40,25 +38,64 @@ double epsilon;
  * It has input PyObject *args from Python.
  */
 
+void convertPython2DArray(PyObject *python_arr,double **arr,int rows,int columns){
+    int i=0,j=0;
+    PyObject *current_list,*item;
+    for (i = 0; i < rows; i++) {
+        current_list = PyList_GetItem(python_arr, i);
+        for(j=0;j<columns;j++){
+            item = PyList_GetItem(current_list, j);
+            if (!PyFloat_Check(item)){
+                arr[i][j] = 0.0;
+            }
+            arr[i][j] = PyFloat_AsDouble(item);
+        }
+    }
+}
+
+PyObject* createPyObjectFrom2DArray(double **arr,int rows,int columns){
+    int i=0,j=0;
+    PyObject *current,*result,*val;
+
+    result = PyList_New(k);
+    for(i=0;i<rows;i++){
+        current = PyList_New(4);
+        for(j=0;j<columns;j++){
+            val = PyFloat_FromDouble(arr[i][j]);
+            PyList_SetItem(current, j, val);
+        }
+        PyList_SetItem(result, i, current);
+    }
+    return result;
+}
+
+
+
 static PyObject* fit(PyObject *self, PyObject *args){
 
-    PyObject *pythonObject;
-    
-    centroids = allocate_array_2d(k, d);
-    data_points = allocate_array_2d(num_rows, d);
+    PyObject *py_centroids,*py_data_points,*result;
 
     /* This parses the Python arguments into a double (d)  variable named z and int (i) variable named n*/
-    if(!PyArg_ParseTuple(args, "iiiidOO", &k, &max_iter,&d,&num_rows,&epsilon,&centroids,&data_points)) {
+    if(!PyArg_ParseTuple(args, "iiiidOO", &k, &max_iter,&d,&num_rows,&epsilon,&py_centroids,&py_data_points)) {
         return NULL; /* In the CPython API, a NULL value is never valid for a
                         PyObject* so it is used to signal that an error has occurred. */
     }
-    algorithm();
 
-/* This builds the answer ("d" = Convert a C double to a Python floating point number) back into a python object */
-    pythonObject =  Py_BuildValue("O", centroids); /*  Py_BuildValue(...) returns a PyObject*  */
+    // printf("K=%d, max_iter=%d, num_rows=%d, d=%d, epsilon=%f\n",k,max_iter,num_rows,d,epsilon);
+
+    centroids = allocate_array_2d(k, d);
+    data_points = allocate_array_2d(num_rows, d);
+
+    convertPython2DArray(py_centroids,centroids,k,d);
+    convertPython2DArray(py_data_points,data_points,num_rows,d);
+
+    algorithm();
+    
+    result = createPyObjectFrom2DArray(centroids,k,d);
+
     free_array_2d(centroids, k);
 
-    return pythonObject;
+    return result;
 }
 
 /*

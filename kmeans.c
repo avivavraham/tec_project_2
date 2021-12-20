@@ -105,7 +105,7 @@ PyInit_mykmeanssp(void)
 
 /// finish c-api 
 
-void error_occured(int condition) {
+void error_occurred(int condition) {
     if (condition == 1) {
         printf("An Error Has Occurred\n");
         exit(1);
@@ -123,7 +123,7 @@ int find_closets_cluster(double *data_point) {
     int index = 0, i;
 
     difference = calloc(k, sizeof(int *));
-    error_occured(difference == NULL);
+    error_occurred(difference == NULL);
     for (i = 0; i < k; i++) {
         current_mu = centroids[i];
         sum = calculate_distance_squared(current_mu, data_point);
@@ -205,13 +205,13 @@ void algorithm() {
         zero_array_2d(new_centroids, k, d);
         zero_array_2d(clusters, k, d);
 
-        error_occured(num_elements_in_cluster == NULL);
+        error_occurred(num_elements_in_cluster == NULL);
 
         set_clusters();
         calculate_new_centroids();
 
         max_iter--;
-        error_occured(sum_diff_centroids == NULL);
+        error_occurred(sum_diff_centroids == NULL);
 
         for (i = 0; i < k; i++) {
             diff = calculate_distance_squared(centroids[i], new_centroids[i]);
@@ -239,10 +239,10 @@ void algorithm() {
 double **allocate_array_2d(int r, int c) {
     double **arr;
     arr = calloc(r, sizeof(double *));
-    error_occured(arr == NULL);
+    error_occurred(arr == NULL);
     while (r--) {
         arr[r] = calloc(c, sizeof(double));
-        error_occured(arr[r] == NULL);
+        error_occurred(arr[r] == NULL);
     }
     return arr;
 }

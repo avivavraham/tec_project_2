@@ -35,7 +35,6 @@ def k_means_initialization(k, data_points):
         index_list.append(rand_index)
         clusters[i-1] = data_points[rand_index]
     print(index_list)
-    print(clusters)
     return clusters
 
 

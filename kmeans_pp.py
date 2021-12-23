@@ -1,11 +1,14 @@
 import numpy as np
-import mykmeanssp as km
+# import mykmeanssp as km
 import sys
 import pandas as pd
 
 # To use this run in the terminal: python setup.py build_ext --inplace
 # And on Nova: python3.8.5 setup.py build_ext --inplace
 
+
+# this function receives k, the number of centroids needed. and data_points numpy array which holds the vectors data.
+# this function returns numpy array of k centroids, chosen by the k-means++ algorithm.
 def k_means_initialization(k, data_points):
     np.random.seed(0)
     number_of_data_points = len(data_points)
@@ -35,15 +38,23 @@ def k_means_initialization(k, data_points):
     print(clusters)
     return clusters
 
+
+# this function calculates the Euclid's l2 norm between two vectors
 def norm(vector1, vector2):
     return sum((vector1 - vector2) ** 2) ** 0.5
 
+
+# this function generates errors
 def validate(condition):
     if not condition:
         print('Invalid Input!')
         exit(1)
 
-# k max_iter epsilon input1 input2
+
+# this function gets the arguments from the user and process them to variables.
+# this function will fill variables- k(the number of centroids) max_iter(the max number of any iteration)
+# epsilon(the number of approximation accuracy needed) input1(data file number 1) input2(data file number 2)
+# this function invokes  k_means_initialization which return the k centroids.
 if __name__ == '__main__':
     try:
         args = sys.argv[1:]
@@ -69,21 +80,19 @@ if __name__ == '__main__':
         file1 = pd.read_csv(input_file1, header=None)
         file2 = pd.read_csv(input_file2, header=None)
 
-        inner_file = pd.merge(left=file1,right=file2,on=0, how = 'inner')
-        data_points = inner_file.drop(columns=[0],axis=1).to_numpy()
+        inner_file = pd.merge(left=file1, right=file2, on=0, how='inner')
+        data_points = inner_file.drop(columns=[0], axis=1).to_numpy()
 
         num_rows = data_points.shape[0]
         d = data_points.shape[1]
 
         validate(K < num_rows)
 
-        centroids = k_means_initialization(K,data_points)
+        centroids = k_means_initialization(K, data_points)
 
-        centroids = km.fit(K,max_iter,d,num_rows,epsilon,centroids.tolist(),data_points.tolist())
+        centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
         print(centroids)
-
 
     except Exception:
         print('An Error Has Occurred in python')
         exit(1)
-

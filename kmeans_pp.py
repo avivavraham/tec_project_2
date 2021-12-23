@@ -1,5 +1,5 @@
 import numpy as np
-# import mykmeanssp as km
+import mykmeanssp as km
 import sys
 import pandas as pd
 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
         centroids = k_means_initialization(K, data_points)
 
-        # centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
+        centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
         print(centroids)
 
     except Exception:

@@ -81,7 +81,7 @@ if __name__ == '__main__':
         file2 = pd.read_csv(input_file2, header=None)
 
         inner_file = pd.merge(left=file1, right=file2, on=0, how='inner')
-        inner_file = inner_file.sort_index
+        inner_file = inner_file.sort_index()
         data_points = inner_file.drop(columns=[0], axis=1).to_numpy()
 
         num_rows = data_points.shape[0]

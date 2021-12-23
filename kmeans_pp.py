@@ -1,5 +1,5 @@
 import numpy as np
-# import mykmeanssp as km
+import mykmeanssp as km
 import sys
 import pandas as pd
 
@@ -14,7 +14,6 @@ def k_means_initialization(k, data_points):
     number_of_data_points = len(data_points)
     d = len(data_points[0])
     clusters = np.zeros((k, d))
-    probes = np.zeros((number_of_data_points, d))
     distances = np.zeros(number_of_data_points)
     i = 1
     index_list = []
@@ -26,7 +25,7 @@ def k_means_initialization(k, data_points):
             min_val = float('inf')
             for j in range(0, i):
                 val = norm(data_points[l], clusters[j])
-                if min_val > val:
+                if val <= min_val:
                     min_val = val
             distances[l] = min_val
         probes = distances / sum(distances)
@@ -81,6 +80,7 @@ if __name__ == '__main__':
         file2 = pd.read_csv(input_file2, header=None)
 
         inner_file = pd.merge(left=file1, right=file2, on=0, how='inner')
+        inner_file = inner_file.sort_index
         data_points = inner_file.drop(columns=[0], axis=1).to_numpy()
 
         num_rows = data_points.shape[0]

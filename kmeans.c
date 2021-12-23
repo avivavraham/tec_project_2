@@ -59,7 +59,7 @@ PyObject* createPyObjectFrom2DArray(double **arr,int rows,int columns){
 
     result = PyList_New(k);
     for(i=0;i<rows;i++){
-        current = PyList_New(4);
+        current = PyList_New(columns);
         for(j=0;j<columns;j++){
             val = PyFloat_FromDouble(arr[i][j]);
             PyList_SetItem(current, j, val);
@@ -68,8 +68,6 @@ PyObject* createPyObjectFrom2DArray(double **arr,int rows,int columns){
     }
     return result;
 }
-
-
 
 static PyObject* fit(PyObject *self, PyObject *args){
 

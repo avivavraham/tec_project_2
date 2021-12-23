@@ -1,5 +1,5 @@
 import numpy as np
-import mykmeanssp as km
+# import mykmeanssp as km
 import sys
 import pandas as pd
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         file2 = pd.read_csv(input_file2, header=None)
 
         inner_file = pd.merge(left=file1, right=file2, on=0, how='inner')
-        inner_file = inner_file.sort_index()
+        inner_file = inner_file.sort_values(by=0,axis=0)
         data_points = inner_file.drop(columns=[0], axis=1).to_numpy()
 
         num_rows = data_points.shape[0]
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 
         centroids = k_means_initialization(K, data_points)
 
-        centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
+        # centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
         print(centroids)
 
     except Exception:

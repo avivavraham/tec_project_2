@@ -29,9 +29,9 @@ def k_means_initialization(k, data_points):
                 if val <= min_val:
                     min_val = val
             distances[l] = min_val
-        probes = distances / sum(distances)
+        probes = distances / (sum(distances))
         i += 1
-        rand_index = np.random.choice(data_points.shape[0], p=probes)
+        rand_index = np.random.choice([i for i in range(number_of_data_points)], p=probes)
         index_list.append(rand_index)
         clusters[i-1] = data_points[rand_index]
     print(index_list)
@@ -41,7 +41,7 @@ def k_means_initialization(k, data_points):
 
 # this function calculates the Euclid's l2 norm between two vectors
 def norm(vector1, vector2):
-    return sum((vector1 - vector2) ** 2) ** 0.5
+    return sum((vector1 - vector2) ** 2)
 
 
 # this function generates errors

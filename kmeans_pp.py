@@ -34,7 +34,11 @@ def k_means_initialization(k, data_points):
         rand_index = np.random.choice([i for i in range(number_of_data_points)], p=probes)
         index_list.append(rand_index)
         clusters[i-1] = data_points[rand_index]
-    print(index_list)
+    for i in range(len(index_list)):
+        if i == len(index_list)-1:
+            print(index_list[i])
+        else:
+            print(index_list[i], end=",")
     return clusters
 
 
@@ -91,8 +95,14 @@ if __name__ == '__main__':
         centroids = k_means_initialization(K, data_points)
 
         centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
-        print(centroids)
-
+        for i in range(K):
+            for j in range(d):
+                num = "%.4f"%float(centroids[i][j])
+                if j == d-1:
+                    print(num)
+                else:
+                    print(num, end=",")
+        print("\n")
     except Exception:
         print('An Error Has Occurred in python')
         exit(1)

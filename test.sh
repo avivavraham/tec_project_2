@@ -1,5 +1,7 @@
 #!/bin/bash
 
+python3 setup.py build_ext --inplace
+
 # compile code
 SRC_DIR="$(find -name setup.py -printf '%h')"
 if [ "$SRC_DIR" == "" ]; then

@@ -14,6 +14,7 @@ def k_means_initialization(k, data_points):
     number_of_data_points = len(data_points)
     d = len(data_points[0])
     clusters = np.zeros((k, d))
+    # probes = np.zeros((number_of_data_points, d))
     distances = np.zeros(number_of_data_points)
     i = 1
     index_list = []

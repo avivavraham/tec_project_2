@@ -102,7 +102,7 @@ if __name__ == '__main__':
                     print(num)
                 else:
                     print(num, end=",")
-        print("\n")
+        print("")
     except Exception:
         print('An Error Has Occurred in python')
         exit(1)

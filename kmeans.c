@@ -1,5 +1,4 @@
 #define PY_SSIZE_T_CLEAN
-// #include <Python/Python.h> //for mac
 #include <Python.h> //for linux
 #include <stdio.h>
 #include <string.h>
@@ -32,10 +31,8 @@ double **data_points, **centroids, **new_centroids, **clusters;
 double epsilon;
 
 /*
- * This actually defines the geo function using a wrapper C API function
- * The wrapping function needs a PyObject* self argument.
- * This is a requirement for all functions and methods in the C API.
- * It has input PyObject *args from Python.
+we get PyObject that represents 2 dimensional array and we convert it
+to 2 dimensional double array (C object)
  */
 
 void convertPython2DArray(PyObject *python_arr,double **arr,int rows,int columns){
@@ -53,6 +50,11 @@ void convertPython2DArray(PyObject *python_arr,double **arr,int rows,int columns
     }
 }
 
+/*
+we get 2 dimensional array and num of rows and columns,
+we return 2 dimensional PyObject
+*/
+
 PyObject* createPyObjectFrom2DArray(double **arr,int rows,int columns){
     int i=0,j=0;
     PyObject *current,*result,*val;
@@ -68,6 +70,17 @@ PyObject* createPyObjectFrom2DArray(double **arr,int rows,int columns){
     }
     return result;
 }
+
+/*
+ * This actually defines the geo function using a wrapper C API function
+ * The wrapping function needs a PyObject* self argument.
+ * This is a requirement for all functions and methods in the C API.
+ * It has input PyObject *args from Python.
+ */
+
+/*
+We perceive the variables from the Python program, initialize the 
+*/
 
 static PyObject* fit(PyObject *self, PyObject *args){
 
@@ -138,7 +151,10 @@ PyInit_mykmeanssp(void)
     return m;
 }
 
-/// finish c-api 
+/*
+this function handles error,
+it checks the condition if it is not true it will print "An Error Has Occurred" and exit
+ */
 
 void error_occurred(int condition) {
     if (condition == 1) {
@@ -224,6 +240,12 @@ double calculate_distance_squared(double *a, double *b) {
     return distance;
 }
 
+/*
+pre condition: centroids and data points arrays already initialized
+every iteration it calculates the clusters and then updates the centroids
+when the difference squared distance of all the centroids is smaller than epsilon we stop and return the centroids
+*/
+
 void algorithm() {
     int i, j;
     double *sum_diff_centroids;
@@ -271,6 +293,10 @@ void algorithm() {
     free(num_elements_in_cluster);
 }
 
+/*
+the function allocate memory for 2 dimensional array of type double
+*/
+
 double **allocate_array_2d(int r, int c) {
     double **arr;
     arr = calloc(r, sizeof(double *));
@@ -282,12 +308,22 @@ double **allocate_array_2d(int r, int c) {
     return arr;
 }
 
+/*
+the function free memory for 2 dimensional array
+*/
+
 void free_array_2d(double **arr, int r) {
     while (r--) {
         free(arr[r]);
     }
     free(arr);
 }
+
+/*
+the function gets two 2 dimensional arrays and num of rows and columns
+it sets the first array to be equal to the second array
+*/
+
 
 void set_equal_array_2d(double **new, double **current, int r, int c) {
     int i, j;
@@ -298,6 +334,11 @@ void set_equal_array_2d(double **new, double **current, int r, int c) {
         }
     }
 }
+
+/*
+the function gets 2 dimensional array and num of rows and columns
+it sets all the values of the array to zero
+*/
 
 void zero_array_2d(double **arr, int r, int c) {
     int i, j;

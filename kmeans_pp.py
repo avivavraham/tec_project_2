@@ -9,7 +9,7 @@ import pandas as pd
 
 # this function receives k, the number of centroids needed. and data_points numpy array which holds the vectors data.
 # this function returns numpy array of k centroids, chosen by the k-means++ algorithm.
-def k_means_initialization(k, data_points):
+def k_means_initialization(k, data_points,printIndex=False):
     np.random.seed(0)
     number_of_data_points = len(data_points)
     d = len(data_points[0])
@@ -34,11 +34,12 @@ def k_means_initialization(k, data_points):
         rand_index = np.random.choice([i for i in range(number_of_data_points)], p=probes)
         index_list.append(rand_index)
         clusters[i-1] = data_points[rand_index]
-    for i in range(len(index_list)):
-        if i == len(index_list)-1:
-            print(index_list[i])
-        else:
-            print(index_list[i], end=",")
+    if printIndex:
+        for i in range(len(index_list)):
+            if i == len(index_list)-1:
+                print(index_list[i])
+            else:
+                print(index_list[i], end=",")
     return clusters
 
 
@@ -47,7 +48,7 @@ def norm(vector1, vector2):
     return sum((vector1 - vector2) ** 2)
 
 
-# this function generates errors
+# this function checks the condition if it is not true it will print "Invalid Input!" and exit
 def validate(condition):
     if not condition:
         print('Invalid Input!')
@@ -57,7 +58,9 @@ def validate(condition):
 # this function gets the arguments from the user and process them to variables.
 # this function will fill variables- k(the number of centroids) max_iter(the max number of any iteration)
 # epsilon(the number of approximation accuracy needed) input1(data file number 1) input2(data file number 2)
-# this function invokes  k_means_initialization which return the k centroids.
+# this function invokes k_means_initialization which return the k centroids.
+# it integrates with the c-api, calls the fit function and then prints the centroids
+# in case of an error it prints "An Error Has Occurred" and exit
 if __name__ == '__main__':
     try:
         args = sys.argv[1:]
@@ -74,7 +77,7 @@ if __name__ == '__main__':
         else:
             max_iter = 300
         
-        # validate(args[-3].isdigit())
+        validate(args[-3].isdecimal)
         epsilon = float(args[-3])
         validate(epsilon > 0)
         input_file1 = args[-2]
@@ -92,7 +95,7 @@ if __name__ == '__main__':
 
         validate(K < num_rows)
 
-        centroids = k_means_initialization(K, data_points)
+        centroids = k_means_initialization(K, data_points,printIndex=True)
 
         centroids = km.fit(K, max_iter, d, num_rows, epsilon, centroids.tolist(), data_points.tolist())
         for i in range(K):
@@ -104,5 +107,5 @@ if __name__ == '__main__':
                     print(num, end=",")
         print("")
     except Exception:
-        print('An Error Has Occurred in python')
+        print('An Error Has Occurred')
         exit(1)

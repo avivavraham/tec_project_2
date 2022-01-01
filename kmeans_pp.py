@@ -79,7 +79,6 @@ if __name__ == '__main__':
         
         validate(args[-3].isdecimal)
         epsilon = float(args[-3])
-        validate(epsilon > 0)
         input_file1 = args[-2]
         input_file2 = args[-1]
 

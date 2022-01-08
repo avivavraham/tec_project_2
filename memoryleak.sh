@@ -10,6 +10,8 @@
 # The results of the memory scan will be outputted into the reports' directory -> leak_reports
 # Each report is indexed, to the corresponding running sequence specified in the test_data/test_readme.txt file.
 
+sudo python3 setup.py build_ext --inplace
+
 mkdir leak_reports
 curl https://svn.python.org/projects/python/trunk/Misc/valgrind-python.supp > valgrind-python.supp
 

@@ -32,5 +32,5 @@ if __name__ == '__main__':
     ax.add_patch(circle)
 
     plt.savefig("elbow.png")
-    plt.show()
+
 
